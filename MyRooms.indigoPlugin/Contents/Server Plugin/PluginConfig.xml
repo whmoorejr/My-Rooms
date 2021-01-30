@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<PluginConfig>
+	<SupportURL>https://forums.indigodomo.com/viewforum.php?f=351</SupportURL>
+  	<Field id="infoLabel0" type="label" fontSize='large' fontColor="black">
+    	<Label>My Rooms Plugin</Label>
+  	</Field>
+
+  	<Field id="space0" type="label" fontColor="black">
+    	<Label>Developed by: Bill Moore</Label>
+  	</Field>
+  	
+  	<Field id="sep7" type="separator">
+  	</Field>
+  	
+  	<Field id="space1" type="label" fontColor="blue">
+  		<Label>Nothing to configure, enjoy the plugin!</Label>
+  	</Field>
+  	
+  	<Field id="recordRequested" type="textfield" hidden="yes"/>
+</PluginConfig>

@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+<Actions>
+	<SupportURL>https://forums.indigodomo.com/viewforum.php?f=351</SupportURL>
+
+<!-- Identifier States -->
+		
+
+	<Action id="setRoomName" deviceFilter="self">
+		<Name>Set Room Name</Name>
+		<CallbackMethod>setRoomName</CallbackMethod>
+		<ConfigUI>
+			<Field type="textfield" id="roomNameField">
+				<Label>Room Name:</Label>
+			</Field>
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>You can insert text, a variable substitution %%v:VARIABLEID%% or device state %%d:DEVICEID:STATEKEY%%</Label>
+			</Field>
+		</ConfigUI>
+	</Action>	
+	
+	<Action id="setRoomState" deviceFilter="self">
+		<Name>Set Room State</Name>
+		<CallbackMethod>setRoomState</CallbackMethod>
+		<ConfigUI>
+			<Field type="menu" id="roomStateField">
+				<Label>Room State:</Label>
+				<List>
+					<Option value="On">On</Option>
+					<Option value="Off">Off</Option>
+					<Option value="Other">Other</Option>					
+				</List>
+			</Field>
+		</ConfigUI>
+	</Action> 
+	<Action id="setFloor" deviceFilter="self">
+		<Name>Set Floor Name/Number</Name>
+		<CallbackMethod>setFloor</CallbackMethod>
+		<ConfigUI>
+			<Field type="textfield" id="floorField">
+				<Label>Floor:</Label>
+			</Field>
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>You can insert text, a variable substitution %%v:VARIABLEID%% or device state %%d:DEVICEID:STATEKEY%%</Label>
+			</Field>
+		</ConfigUI>
+	</Action>
+	<Action id="setBuilding" deviceFilter="self">
+		<Name>Set Building Name</Name>
+		<CallbackMethod>setBuilding</CallbackMethod>
+		<ConfigUI>
+			<Field type="textfield" id="roomNameField">
+				<Label>Building Name:</Label>
+			</Field>
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>You can insert text, a variable substitution %%v:VARIABLEID%% or device state %%d:DEVICEID:STATEKEY%%</Label>
+			</Field>
+		</ConfigUI>
+	</Action>
+	
+	 
+
+	<Action id="sep1" />
+<!-- Occupancy States -->		
+	<Action id="setAllOccupancy" deviceFilter="self" uiPath="Occupancy States">
+		<Name>Set All Occupancy States</Name>
+		<CallbackMethod>setAllOccupancy</CallbackMethod>
+		<ConfigUI>
+			<Field type="textfield" id="isOccupiedAllField"><Label>Is Occupied:</Label></Field>
+			<Field type="textfield" id="lastOccupiedAllField"><Label>Last Occupied:</Label></Field>
+			<Field type="textfield" id="lastVacantAllField"><Label>Last Vacant:</Label></Field>
+			<Field type="textfield" id="occupeidBy1AllField"><Label>Occupied By 1:</Label></Field>
+			<Field type="textfield" id="occupeidBy2AllField"><Label>Occupied By 2:</Label></Field>
+			<Field id="separator1" type="separator" />
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>You can insert variable substitution %%v:VARIABLEID%% or device state %%d:DEVICEID:STATEKEY%% for any of the above fields.</Label>
+			</Field>				
+		</ConfigUI>
+	</Action>
+		
+	<Action id="setIsOccupied" deviceFilter="self" uiPath="Occupancy States">
+		<Name>Set Is Occupied</Name>
+		<CallbackMethod>setIsOccupied</CallbackMethod>
+		<ConfigUI>
+			<Field type="textfield" id="isOccupiedField">
+				<Label>Is Occupied:</Label>
+			</Field>
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>You can insert text, a variable substitution %%v:VARIABLEID%% or device state %%d:DEVICEID:STATEKEY%%</Label>
+			</Field>
+		</ConfigUI>
+	</Action>
+	
+	
+	
+	<Action id="sep2" />	
+<!-- Lighting Device States -->	
+	<Action id="setMainLight" deviceFilter="self" uiPath="Lighting Devices">
+		<Name>Set Main Light</Name>
+		<CallbackMethod>setMainLight</CallbackMethod>
+		<ConfigUI>
+			<Field type="textfield" id="mainLightField">
+				<Label>Main Light:</Label>
+			</Field>
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>You can insert text, a variable substitution %%v:VARIABLEID%% or device state %%d:DEVICEID:STATEKEY%%</Label>
+			</Field>
+		</ConfigUI>
+	</Action>
+
+
+	<Action id="sep3" />
+<!-- Climate Device States -->		
+	<Action id="setTemperature" deviceFilter="self" uiPath="Climate Devices">
+		<Name>Set Temperature</Name>
+		<CallbackMethod>setTemperature</CallbackMethod>
+		<ConfigUI>
+			<Field type="textfield" id="temperatureField">
+				<Label>Temperature:</Label>
+			</Field>
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>You can insert text, a variable substitution %%v:VARIABLEID%% or device state %%d:DEVICEID:STATEKEY%%</Label>
+			</Field>
+		</ConfigUI>
+	</Action>
+	
+	
+	<Action id="sep4" />	
+<!-- Outlet Device States -->
+	<Action id="setOutlet1" deviceFilter="self" uiPath="Outlet Devices">
+		<Name>Set Outlet 1</Name>
+		<CallbackMethod>setOutlet1</CallbackMethod>
+		<ConfigUI>
+			<Field type="textfield" id="outlet1Field">
+				<Label>Temperature:</Label>
+			</Field>
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>You can insert text, a variable substitution %%v:VARIABLEID%% or device state %%d:DEVICEID:STATEKEY%%</Label>
+			</Field>
+		</ConfigUI>
+	</Action>
+
+
+
+	
+	<Action id="sep5" />
+<!-- Audio Video Device States -->	
+	<Action id="setTelevision" deviceFilter="self" uiPath="Audio/Video Devices">
+		<Name>Set Television</Name>
+		<CallbackMethod>setTelevision</CallbackMethod>
+		<ConfigUI>
+			<Field type="textfield" id="televsionField">
+				<Label>Television:</Label>
+			</Field>
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>You can insert text, a variable substitution %%v:VARIABLEID%% or device state %%d:DEVICEID:STATEKEY%%</Label>
+			</Field>
+		</ConfigUI>
+	</Action>
+	
+	
+
+	<Action id="sep6" />	
+<!-- Security Device States -->		
+	<Action id="setAlertsOn" deviceFilter="self" uiPath="Security Devices">
+		<Name>Set Alerts On</Name>
+		<CallbackMethod>setAlertsOn</CallbackMethod>
+		<ConfigUI>
+			<Field type="textfield" id="alertsOnField">
+				<Label>Alerts On:</Label>
+			</Field>
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>You can insert text, a variable substitution %%v:VARIABLEID%% or device state %%d:DEVICEID:STATEKEY%%</Label>
+			</Field>
+		</ConfigUI>
+	</Action>
+	
+	
+	
+	<Action id="sep7" />
+<!-- Auxiliary Device States -->	
+	<Action id="setAux01" deviceFilter="self" uiPath="Auxiliary Devices">
+		<Name>Set Auxiliary 01 </Name>
+		<CallbackMethod>setAux01</CallbackMethod>
+		<ConfigUI>
+			<Field type="textfield" id="aux01NameField"><Label>Auxiliary 01 Name:</Label></Field>
+			<Field type="textfield" id="aux01StateField"><Label>Auxiliary 01 State:</Label></Field>
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>You can insert text, a variable substitution %%v:VARIABLEID%% or device state %%d:DEVICEID:STATEKEY%%</Label>
+			</Field>
+		</ConfigUI>
+	</Action>
+	
+	
+	
+	<Action id="sep8" />	
+<!-- Now Showing Actions -->	
+	<Action id="nowShowingFirst" uiPath="Now Showing Actions">
+		<Name>Now Showing First Record</Name>
+		<CallbackMethod>nowShowingFirst</CallbackMethod>
+	</Action>	
+	<Action id="nowShowingPrevious" uiPath="Now Showing Actions">
+		<Name>Now Showing Previous Record</Name>
+		<CallbackMethod>nowShowingPrevious</CallbackMethod>
+	</Action>
+	<Action id="nowShowingNext" uiPath="Now Showing Actions">
+		<Name>Now Showing Next Record</Name>
+		<CallbackMethod>nowShowingNext</CallbackMethod>
+	</Action>	
+	<Action id="nowShowingLast" uiPath="Now Showing Actions">
+		<Name>Now Showing Last Record</Name>
+		<CallbackMethod>nowShowingLast</CallbackMethod>
+	</Action>	
+	<Action id="nowShowingSpecific" uiPath="Now Showing Actions">
+		<Name>Now Showing Specific Record</Name>
+		<CallbackMethod>nowShowingSpecific</CallbackMethod>
+		<ConfigUI>
+			<Field type="textfield" id="nowShowingSpecificField">
+				<Label>Record Number</Label>
+			</Field>
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>Must be a whole number less than or equal to the number of rooms you have created</Label>
+			</Field>
+		</ConfigUI>	
+	</Action>
+
+
+	<Action id="sep9" />
+<!-- Experiment Actions -->	
+	<Action id="setAnyState" uiPath="Combo Actions">
+		<Name>Set Any State</Name>
+		<CallbackMethod>setAnyState</CallbackMethod>
+		<ConfigUI>
+			<Field type="menu" id="setADeviceField" filter="self" devfaultValue="0" tooltip="">
+				<Label>Room to modify:</Label>
+				<List class="self" filter="self" method="filterDevices" dynamicReload="false"/>
+			</Field>
+			<Field id="buttonConfirmDevice" type="button" tooltip="">
+				<Label>To Select Device:</Label><Title>CLICK</Title> <CallbackMethod>buttonConfirmDevice</CallbackMethod>
+			</Field>	
+			<Field type="menu" id="setAnyStateField" defaultValue="0" tooltip="">
+				<Label>Select State:</Label>
+				<List class="self" filter="new" method="filterDevStates" dynamicReload="true"/>
+			</Field>
+			<Field type="textfield" id="newStateValueField"><Label>Enter New Value:</Label></Field>
+			<Field id="label" type="label" fontSize="small" fontColor="darkgray">
+				<Label>You can insert text, a variable substitution %%v:VARIABLEID%% or device state %%d:DEVICEID:STATEKEY%%</Label>
+			</Field>
+			<Field id="buttonConfirmNewValue" type="button" tooltip="">
+				<Label>To Make Change Now:</Label><Title>CLICK</Title> <CallbackMethod>buttonConfirmNewValue</CallbackMethod>
+			</Field>	
+		</ConfigUI>	
+	</Action>
+		
+	
+</Actions>	

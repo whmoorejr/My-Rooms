@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<!-- One Device type, aRoom -->
+<Devices>
+	<Device type="custom" id="aRoom">
+		<Name>Room</Name>
+		<ConfigUI>
+			<Field id="NameSpace" type="label">
+				<Label>Use Actions to set custom device states</Label>
+			</Field>
+			<Field id="address" type="textfield">
+				<Label>Enter Room Location:</Label>
+			</Field>
+			<Field id="NameSpace2" type="label">
+				<Label>This will only be available on Indigo Main Page GUI</Label>
+			</Field>
+						<Field id="NameSpace3" type="label">
+				<Label>This will not be saved as a device state.</Label>
+			</Field>
+		</ConfigUI>
+		<States>
+		
+		<!-- Identifier States -->
+			<State id="roomName"><ValueType>String</ValueType><TriggerLabel>Room Name</TriggerLabel><ControlPageLabel>Room Name</ControlPageLabel></State>
+			<State id="roomState">
+				<ValueType>
+					<List>
+						<Option value="On">On</Option>
+						<Option value="Off">Off</Option>
+						<Option value="Other">Other</Option>
+					</List>
+				</ValueType>
+				<TriggerLabel>Room State Changed</TriggerLabel>
+				<TriggerLabelPrefix>Room State Changed to</TriggerLabelPrefix>
+				<ControlPageLabel>Room State</ControlPageLabel>
+			</State>
+			<State id="floor"><ValueType>String</ValueType><TriggerLabel>Floor</TriggerLabel><ControlPageLabel>Floor</ControlPageLabel></State>
+			<State id="building"><ValueType>String</ValueType><TriggerLabel>Building</TriggerLabel><ControlPageLabel>Building</ControlPageLabel></State>
+			
+		<!-- Occupancy States -->	
+			<State id="isOccupied"><ValueType>String</ValueType><TriggerLabel>Is Occupied</TriggerLabel><ControlPageLabel>Is Occupied</ControlPageLabel></State>
+			<State id="lastOccupied"><ValueType>String</ValueType><TriggerLabel>Last Occupied</TriggerLabel><ControlPageLabel>Last Occupied</ControlPageLabel></State>	
+			<State id="lastVacant"><ValueType>String</ValueType><TriggerLabel>Last Vacant</TriggerLabel><ControlPageLabel>Last Vacant</ControlPageLabel></State>	
+			<State id="occupiedBy1"><ValueType>String</ValueType><TriggerLabel>OccupiedBy1</TriggerLabel><ControlPageLabel>OccupiedBy1</ControlPageLabel></State>
+			<State id="occupiedBy2"><ValueType>String</ValueType><TriggerLabel>OccupiedBy2</TriggerLabel><ControlPageLabel>OccupiedBy2</ControlPageLabel></State>
+			
+			
+		<!-- Lighting Device States -->		
+			<State id="mainLight"><ValueType>String</ValueType><TriggerLabel>Main Light</TriggerLabel><ControlPageLabel>Main Light</ControlPageLabel></State>
+			<State id="accentLight"><ValueType>String</ValueType><TriggerLabel>Accent Light</TriggerLabel><ControlPageLabel>Accent Light</ControlPageLabel></State>
+			<State id="luminescence"><ValueType>String</ValueType><TriggerLabel>Luminescence</TriggerLabel><ControlPageLabel>Luminescence</ControlPageLabel></State>
+			<State id="windowShades"><ValueType>String</ValueType><TriggerLabel>Window Shades</TriggerLabel><ControlPageLabel>Window Shades</ControlPageLabel></State>
+					
+			
+		<!-- Climate Device States -->		
+			<State id="temperature"><ValueType>String</ValueType><TriggerLabel>Temperature</TriggerLabel><ControlPageLabel>Temperature</ControlPageLabel></State>
+			<State id="humidity"><ValueType>String</ValueType><TriggerLabel>Humidity</TriggerLabel><ControlPageLabel>Humidity</ControlPageLabel></State>
+			<State id="ceilingFan"><ValueType>String</ValueType><TriggerLabel>Ceiling Fan</TriggerLabel><ControlPageLabel>Ceiling Fan</ControlPageLabel></State>
+			
+			
+		<!-- Outlet Device States -->		
+			<State id="outlet1"><ValueType>String</ValueType><TriggerLabel>Outlet 1</TriggerLabel><ControlPageLabel>Outlet 1</ControlPageLabel></State>
+			<State id="outlet2"><ValueType>String</ValueType><TriggerLabel>Outlet 2</TriggerLabel><ControlPageLabel>Outlet 2</ControlPageLabel></State>
+			<State id="outlet3"><ValueType>String</ValueType><TriggerLabel>Outlet 3</TriggerLabel><ControlPageLabel>Outlet 3</ControlPageLabel></State>
+		
+		
+		<!-- Audio Video Device States -->	
+			<State id="television"><ValueType>String</ValueType><TriggerLabel>Television</TriggerLabel><ControlPageLabel>Television</ControlPageLabel></State>
+			<State id="roku"><ValueType>String</ValueType><TriggerLabel>Roku</TriggerLabel><ControlPageLabel>Roku</ControlPageLabel></State>
+			<State id="appleTV"><ValueType>String</ValueType><TriggerLabel>Apple TV</TriggerLabel><ControlPageLabel>Apple TV</ControlPageLabel></State>
+			<State id="domoPad"><ValueType>String</ValueType><TriggerLabel>DomoPad</TriggerLabel><ControlPageLabel>DomoPad</ControlPageLabel></State>
+			<State id="videoOther1"><ValueType>String</ValueType><TriggerLabel>Video Other 1</TriggerLabel><ControlPageLabel>Video Other 1</ControlPageLabel></State>
+			<State id="videoOther2"><ValueType>String</ValueType><TriggerLabel>Video Other 2</TriggerLabel><ControlPageLabel>Video Other 2</ControlPageLabel></State>
+			<State id="airplay"><ValueType>String</ValueType><TriggerLabel>Airplay</TriggerLabel><ControlPageLabel>Airplay</ControlPageLabel></State>
+			<State id="alexa"><ValueType>String</ValueType><TriggerLabel>Alexa</TriggerLabel><ControlPageLabel>Alexa</ControlPageLabel></State>
+			<State id="sonos"><ValueType>String</ValueType><TriggerLabel>Sonos</TriggerLabel><ControlPageLabel>Sonos</ControlPageLabel></State>
+			<State id="audioOther1"><ValueType>String</ValueType><TriggerLabel>audioOther1</TriggerLabel><ControlPageLabel>audioOther1</ControlPageLabel></State>
+			<State id="audioOther2"><ValueType>String</ValueType><TriggerLabel>audioOther2</TriggerLabel><ControlPageLabel>audioOther2</ControlPageLabel></State>
+
+		
+		<!-- Security Device States -->	
+			<State id="alertsOn"><ValueType>String</ValueType><TriggerLabel>Alerts On</TriggerLabel><ControlPageLabel>Alerts On</ControlPageLabel></State>
+			<State id="door1"><ValueType>String</ValueType><TriggerLabel>Door 1</TriggerLabel><ControlPageLabel>Door 1</ControlPageLabel></State>
+			<State id="door2"><ValueType>String</ValueType><TriggerLabel>Door 2</TriggerLabel><ControlPageLabel>Door 2</ControlPageLabel></State>
+			<State id="door3"><ValueType>String</ValueType><TriggerLabel>Door 3</TriggerLabel><ControlPageLabel>Door 3</ControlPageLabel></State>
+			<State id="door4"><ValueType>String</ValueType><TriggerLabel>Door 4</TriggerLabel><ControlPageLabel>Door 4</ControlPageLabel></State>
+			<State id="lock1"><ValueType>String</ValueType><TriggerLabel>Lock 1</TriggerLabel><ControlPageLabel>Lock 1</ControlPageLabel></State>
+			<State id="lock2"><ValueType>String</ValueType><TriggerLabel>Lock 2</TriggerLabel><ControlPageLabel>Lock 2</ControlPageLabel></State>
+			<State id="lock3"><ValueType>String</ValueType><TriggerLabel>Lock 3</TriggerLabel><ControlPageLabel>Lock 3</ControlPageLabel></State>
+			<State id="lock4"><ValueType>String</ValueType><TriggerLabel>Lock 4</TriggerLabel><ControlPageLabel>Lock 4</ControlPageLabel></State>
+			<State id="window1"><ValueType>String</ValueType><TriggerLabel>Window 1</TriggerLabel><ControlPageLabel>Window 1</ControlPageLabel></State>
+			<State id="window2"><ValueType>String</ValueType><TriggerLabel>Window 2</TriggerLabel><ControlPageLabel>Window 2</ControlPageLabel></State>
+			<State id="window3"><ValueType>String</ValueType><TriggerLabel>Window 3</TriggerLabel><ControlPageLabel>Window 3</ControlPageLabel></State>
+			<State id="motionDetected"><ValueType>String</ValueType><TriggerLabel>Motion Detected</TriggerLabel><ControlPageLabel>Motion Detected</ControlPageLabel></State>
+			<State id="motionLast"><ValueType>String</ValueType><TriggerLabel>Motion Last</TriggerLabel><ControlPageLabel>Motion Last</ControlPageLabel></State>
+			<State id="cctvImage"><ValueType>String</ValueType><TriggerLabel>CCTV Image</TriggerLabel><ControlPageLabel>CCTV Image</ControlPageLabel></State>
+			<State id="cctvState"><ValueType>String</ValueType><TriggerLabel>CCTV State</TriggerLabel><ControlPageLabel>CCTV State</ControlPageLabel></State>
+			<State id="otherSecurity1"><ValueType>String</ValueType><TriggerLabel>Other Security 1</TriggerLabel><ControlPageLabel>Other Security 1</ControlPageLabel></State>
+			<State id="otherSecurity2"><ValueType>String</ValueType><TriggerLabel>Other Security 2</TriggerLabel><ControlPageLabel>Other Security 2</ControlPageLabel></State>
+			<State id="otherSecurity3"><ValueType>String</ValueType><TriggerLabel>Other Security 3</TriggerLabel><ControlPageLabel>Other Security 3</ControlPageLabel></State>
+			
+			
+		<!-- Auxiliary Device States -->
+			<State id="aux01Name"><ValueType>String</ValueType><TriggerLabel>Auxiliary 01 Name</TriggerLabel><ControlPageLabel>Auxiliary 01 Name</ControlPageLabel></State>
+			<State id="aux01State"><ValueType>String</ValueType><TriggerLabel>Auxiliary 01 State</TriggerLabel><ControlPageLabel>Auxiliary 01 State</ControlPageLabel></State>		
+			<State id="aux02Name"><ValueType>String</ValueType><TriggerLabel>Auxiliary 02 Name</TriggerLabel><ControlPageLabel>Auxiliary 02 Name</ControlPageLabel></State>
+			<State id="aux02State"><ValueType>String</ValueType><TriggerLabel>Auxiliary 02 State</TriggerLabel><ControlPageLabel>Auxiliary 02 State</ControlPageLabel></State>	
+			<State id="aux03Name"><ValueType>String</ValueType><TriggerLabel>Auxiliary 03 Name</TriggerLabel><ControlPageLabel>Auxiliary 03 Name</ControlPageLabel></State>
+			<State id="aux03State"><ValueType>String</ValueType><TriggerLabel>Auxiliary 03 State</TriggerLabel><ControlPageLabel>Auxiliary 03 State</ControlPageLabel></State>
+			<State id="aux04Name"><ValueType>String</ValueType><TriggerLabel>Auxiliary 04 Name</TriggerLabel><ControlPageLabel>Auxiliary 04 Name</ControlPageLabel></State>
+			<State id="aux04State"><ValueType>String</ValueType><TriggerLabel>Auxiliary 04 State</TriggerLabel><ControlPageLabel>Auxiliary 04 State</ControlPageLabel></State>	
+			<State id="aux05Name"><ValueType>String</ValueType><TriggerLabel>Auxiliary 05 Name</TriggerLabel><ControlPageLabel>Auxiliary 05 Name</ControlPageLabel></State>
+			<State id="aux05State"><ValueType>String</ValueType><TriggerLabel>Auxiliary 05 State</TriggerLabel><ControlPageLabel>Auxiliary 05 State</ControlPageLabel></State>
+				
+								
+		</States>
+		<UiDisplayStateId>roomState</UiDisplayStateId>
+	</Device>
+</Devices>
