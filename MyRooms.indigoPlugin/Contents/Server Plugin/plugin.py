@@ -30,152 +30,144 @@ class Plugin(indigo.PluginBase):
 			self.aRoomDev.updateStateImageOnServer(indigo.kStateImageSel.SensorOn)
 			self.aRoomDev.updateStateOnServer(key="roomState", value="On")
 			
-		self.pluginPrefs["recordRequested"] = 0
+			newProps = aRoomDev.pluginProps  #Use pluginProps to save the value before substitution
+			newProps["meta_roomState"] = "On"
+		    	self.aRoomDev.replacePluginPropsOnServer(newProps)
 			
-		someVal = self.pluginPrefs["recordRequested"]
-		indigo.server.log("Setting value of Now Showing Room to " + str(someVal))
+		self.pluginPrefs["recordRequested"] = 0
+		self.pluginPrefs["pollFreq"] = 10	
+		someVal = self.pluginPrefs["pollFreq"]
+		indigo.server.log("Polling Frequecny Reset to " + str(someVal)+" Seconds.  Use Plugin Config to change")
+		# indigo.devices.subscribeToChanges()   <-- need to add more stuff to work properly
+		# indigo.variables.subscribeToChanges()
 
 	def shutdown(self):
 		self.debugLog(u"shutdown called")
 		
 	def deviceStartComm(self, dev):			
-		dev.stateListOrDisplayStateIdChanged()   
+		dev.stateListOrDisplayStateIdChanged()  
+		
+	def myLogTest(self):
+		self.debugLog("experiment to see if invoking a function will work")
+		
+	def runConcurrentThread(self):
+		
+		try:
+			while True:
+				pollFreq = self.pluginPrefs["pollFreq"]
+				self.sleep(pollFreq)
+				
+				for dev in indigo.devices.iter(filter="com.whmoorejr.my-rooms"):
+				###### Identifier States	
+					subRoomName = self.substitute(dev.pluginProps.get("meta_roomName","unknown"))
+					subRoomState = self.substitute(dev.pluginProps.get("meta_roomState","Other"))
+					subFloorLevel = self.substitute(dev.pluginProps.get("meta_floorLevel","unknown"))
+					subBuilding = self.substitute(dev.pluginProps.get("meta_building","unknown"))
+				###### Occupancy States	
+					subIsOccupied = self.substitute(dev.pluginProps.get("meta_isOccupied","unknown"))
+					subLastOccupied = self.substitute(dev.pluginProps.get("meta_lastOccupied","unknown"))
+					subLastVacant = self.substitute(dev.pluginProps.get("meta_lastVacant","unknown"))
+					subOccupiedBy1 = self.substitute(dev.pluginProps.get("meta_occupiedBy1","unknown"))
+					subOccupiedBy2 = self.substitute(dev.pluginProps.get("meta_occupiedBy2","unknown"))
+				###### Lighting Device States
+					subMainLight = self.substitute(dev.pluginProps.get("meta_mainLight","unknown"))
+					subAccentLight = self.substitute(dev.pluginProps.get("meta_accentLight","unknown"))
+					subLuminescence = self.substitute(dev.pluginProps.get("meta_luminescence","unknown"))
+					subWindowShades = self.substitute(dev.pluginProps.get("meta_windowShades","unknown"))
+				###### Climate Device States
+					subTemperature = self.substitute(dev.pluginProps.get("meta_temperature","unknown"))
+					subHumidity = self.substitute(dev.pluginProps.get("meta_humidity","unknown"))
+					subCeilingFan = self.substitute(dev.pluginProps.get("meta_ceilingFan","unknown"))
+					
+					
+					#indigo.server.log("Sleep Test") # <-- for testing
+					updatedStates = [
+						{'key' : u'roomName', 'value' : subRoomName},
+						{'key' : u'roomState', 'value' : subRoomState},
+						{'key' : u'floorLevel', 'value' : subFloorLevel},
+						{'key' : u'building', 'value' : subBuilding},
+						{'key' : u'isOccupied', 'value' : subIsOccupied},
+						{'key' : u'lastOccupied', 'value' : subLastOccupied},
+						{'key' : u'lastVacant', 'value' : subLastVacant},
+						{'key' : u'occupiedBy1', 'value' : subOccupiedBy1},
+						{'key' : u'occupiedBy2', 'value' : subOccupiedBy2},
+						{'key' : u'mainLight', 'value' : subMainLight},
+						{'key' : u'accentLight', 'value' : subAccentLight},
+						{'key' : u'luminescence', 'value' : subLuminescence},
+						{'key' : u'windowShades', 'value' : subWindowShades},
+						{'key' : u'temperature', 'value' : subTemperature},
+						{'key' : u'humidity', 'value' : subHumidity},
+						{'key' : u'ceilingFan', 'value' : subCeilingFan}
+						]
+					dev.updateStatesOnServer(updatedStates)
+					if subRoomState == "On":
+						dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOn)
+					elif subRoomState == "Off":
+						dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOff)
+					else: 
+						dev.updateStateImageOnServer(indigo.kStateImageSel.SensorTripped)	
+				
+		except self.StopThread:
+			indigo.server.log(u"stop requested from indigo")
+			
+		return
+	####################################
+	# Plugin Config 
+	####################################	
+	def setPollFrequency(self, filter="", valuesDict=None, typeId="", targetID=0):
+		listOptions = [
+			(5,"5 Seconds"),(10,"10 Seconds"),(20,"20 Seconds"),
+			(30,"30 Seconds"),(40,"40 Seconds"),(50,"50 Seconds"),
+			(60,"1 Minute"),(180,"3 Minutes"),(300,"5 Minutes"),(600,"10 Minutes")
+			]
+		return listOptions
+		
+	def validatePrefsConfigUi(self, valuesDict):
+		pollFreq = self.pluginPrefs["pollFreq"]
+		pollFreqInt = int(pollFreq)
+		if pollFreqInt > 0:
+			self.pluginPrefs["pollFreq"] = pollFreqInt
+			return (True, valuesDict)
+		else:
+			self.pluginPrefs["pollFreq"] = 10
+			return (False, valuesDict)
+	
 
-	########################################
+	####################################
 	# Plugin Actions object callbacks 
-	######################
+	####################################
+	
+	
 	
 	# ON OFF STATE OF DEVICE ON UI		
 	def setRoomState(self, pluginAction, dev):
 	#	self.debugLog(u"setHomestate Action called:\n" + str(pluginAction))
-		dev.updateStateOnServer(key="roomState", value=str(pluginAction.props.get(u"roomStateField")))
+		
 		RoomStateValue = str(pluginAction.props.get(u"roomStateField"))
+		dev.updateStateOnServer(key="roomState", value=RoomStateValue)
+		newProps = dev.pluginProps  #Use pluginProps to save the value before substitution
+		thisRoom = dev.name	
+		    	
 		if RoomStateValue == "On":
-			dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOn)	
-		elif RoomStateValue == "Off":
-			dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOff)			
-		else:
-			dev.updateStateImageOnServer(indigo.kStateImageSel.SensorTripped)
-		self.debugLog("Set Room State: " + str(pluginAction.props.get(u"roomStateField")) + " Entered.  State roomState set to: " + RoomStateValue)
-		
-	
-			
-	
-	# EMAIL ADDRESS FIELDS (From MyPeople Plugin)
-	def setEmail1Address(self, pluginAction, dev):
-		substitutedTitle = self.substitute(pluginAction.props.get("email1AddressField", ""))
-		dev.updateStateOnServer(key="email1Address", value=substitutedTitle)
-		self.debugLog("Set Email 1 Address: " + str(pluginAction.props.get(u"email1AddressField")) + " Entered.  State email1Address set to: " + substitutedTitle)
-		
-	
-	
-	# UPDATE ALL STATES IN ONE ACTION (Not working yet... set up for My People Plugin still)
-	def setAllStatesForPerson(self, pluginAction, dev):
-	
-		substitutedTitle1 = self.substitute(pluginAction.props.get("homeStateAllField", ""))
-		if substitutedTitle1 == "Home":
 			dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOn)
-			dev.updateStateOnServer(key="homeState", value="Home")
-			newState ="Home"
-			newSensor ="On"	
-		elif substitutedTitle1 == "Away":
+			newProps["meta_roomState"] = "On"
+			dev.replacePluginPropsOnServer(newProps)	
+				
+		elif RoomStateValue == "Off":
 			dev.updateStateImageOnServer(indigo.kStateImageSel.SensorOff)
-			dev.updateStateOnServer(key="homeState", value="Away")
-			newState ="Away"
-			newSensor ="Off"	
-		elif substitutedTitle1 == "":
-			dev.updateStateImageOnServer(indigo.kStateImageSel.SensorTripped)
-			dev.updateStateOnServer(key="homeState", value="Unsure")
-			newState ="Unsure"
-			newSensor ="Tripped"		
+			newProps["meta_roomState"] = "Off"
+			dev.replacePluginPropsOnServer(newProps)	
+							
 		else:
 			dev.updateStateImageOnServer(indigo.kStateImageSel.SensorTripped)
-			dev.updateStateOnServer(key="homeState", value="Unsure")
-			newState ="Unsure"	
-			newSensor ="Tripped"		
-		self.debugLog("01: " + str(pluginAction.props.get(u"homeStateAllField")) + " Entered.  State homeState set to: " + newState + ", Sensor: " + newSensor)
-		
-
-		substitutedTitle2 = self.substitute(pluginAction.props.get("userLocationAllField", ""))
-		dev.updateStateOnServer(key="userLocation", value=substitutedTitle2)
-		self.debugLog("02: " + str(pluginAction.props.get(u"userLocationAllField")) + " Entered.  State userLocation set to: " + substitutedTitle2)
-		
-		substitutedTitle3 = self.substitute(pluginAction.props.get("firstNameAllField", ""))
-		dev.updateStateOnServer(key="firstName", value=substitutedTitle3)
-		self.debugLog("03: " + str(pluginAction.props.get(u"firstNameAllField")) + " Entered.  " + "State firstName set to: " + substitutedTitle3)
-		
-		substitutedTitle4 = self.substitute(pluginAction.props.get("lastNameAllField", ""))
-		self.debugLog("04: " + str(pluginAction.props.get(u"lastNameAllField")) + " Entered.  " + "State lastName set to: " + substitutedTitle4)
-		dev.updateStateOnServer(key="lastName", value=substitutedTitle4)
+			newProps["meta_roomState"] = "Other"
+			dev.replacePluginPropsOnServer(newProps)
+				
+		metaMessage = dev.pluginProps["meta_roomState"]
+		self.debugLog(thisRoom+" roomState set to: -" + RoomStateValue+"- .  meta_roomState set to: -"+metaMessage+"-")
+		myLogTest(self)
+	
 			
-		substitutedTitle5 = self.substitute(pluginAction.props.get("friendlyNameAllField", ""))
-		self.debugLog("05: " + str(pluginAction.props.get(u"friendlyNameAllField")) + " Entered.  " + "State friendlyName set to: " + substitutedTitle5)
-		dev.updateStateOnServer(key="friendlyName", value=substitutedTitle5)
-		
-		substitutedTitle6 = self.substitute(pluginAction.props.get("userIDNumberAllField", ""))
-		self.debugLog("06: " + str(pluginAction.props.get(u"userIDNumberAllField")) + " Entered.  " + "State userIDNumber set to: " + substitutedTitle6)
-		dev.updateStateOnServer(key="userIDNumber", value=substitutedTitle6)
-		
-		substitutedTitle7 = self.substitute(pluginAction.props.get("userPinNumberAllField", ""))
-		self.debugLog("07: " + str(pluginAction.props.get(u"userPinNumberAllField")) + " Entered.  " + "State userPinNumber set to: " + substitutedTitle7)
-		dev.updateStateOnServer(key="userPinNumber", value=substitutedTitle7)
-		
-		substitutedTitle8 = self.substitute(pluginAction.props.get("userPasswordAllField", ""))
-		self.debugLog("08: " + str(pluginAction.props.get(u"userPasswordAllField")) + " Entered.  " + "State userPassword set to: " + substitutedTitle8)
-		dev.updateStateOnServer(key="userPassword", value=substitutedTitle8)
-		
-		substitutedTitle9 = self.substitute(pluginAction.props.get("phone1NumberAllField", ""))
-		self.debugLog("09: " + str(pluginAction.props.get(u"phone1NumberAllField")) + " Entered.  " + "State phone1Number set to: " + substitutedTitle9)
-		dev.updateStateOnServer(key="phone1Number", value=substitutedTitle9)
-	
-		substitutedTitle10 = self.substitute(pluginAction.props.get("phone1SMSAllField", ""))
-		self.debugLog("10: " + str(pluginAction.props.get(u"phone1SMSAllField")) + " Entered.  " + "State phone1SMS set to: " + substitutedTitle10)
-		dev.updateStateOnServer(key="phone1SMS", value=substitutedTitle10)
-	
-		substitutedTitle11 = self.substitute(pluginAction.props.get("phone1MMSAllField", ""))
-		self.debugLog("11: " + str(pluginAction.props.get(u"phone1MMSAllField")) + " Entered.  " + "State phone1MMS set to: " + substitutedTitle11)
-		dev.updateStateOnServer(key="phone1MMS", value=substitutedTitle11)
-		
-		substitutedTitle12 = self.substitute(pluginAction.props.get("phone1IPAddressAllField", ""))
-		self.debugLog("12: " + str(pluginAction.props.get(u"phone1IPAddressAllField")) + " Entered.  " + "State phone1IPAddress set to: " + substitutedTitle12)
-		dev.updateStateOnServer(key="phone1IPAddress", value=substitutedTitle12)
-	
-		substitutedTitle13 = self.substitute(pluginAction.props.get("phone2NumberAllField", ""))
-		self.debugLog("13: " + str(pluginAction.props.get(u"phone2NumberAllField")) + " Entered.  " + "State phone2Number set to: " + substitutedTitle13)
-		dev.updateStateOnServer(key="phone2Number", value=substitutedTitle13)
-	
-		substitutedTitle14 = self.substitute(pluginAction.props.get("phone2SMSAllField", ""))
-		self.debugLog("14: " + str(pluginAction.props.get(u"phone1SMSAllField")) + " Entered.  " + "State phone2SMS set to: " + substitutedTitle14)
-		dev.updateStateOnServer(key="phone2SMS", value=substitutedTitle14)
-	
-		substitutedTitle15 = self.substitute(pluginAction.props.get("phone2MMSAllField", ""))
-		self.debugLog("15: " + str(pluginAction.props.get(u"phone2MMSAllField")) + " Entered.  " + "State phone2MMS set to: " + substitutedTitle15)
-		dev.updateStateOnServer(key="phone2MMS", value=substitutedTitle15)
-		
-		substitutedTitle16 = self.substitute(pluginAction.props.get("phone2IPAddressAllField", ""))
-		self.debugLog("16: " + str(pluginAction.props.get(u"phone2IPAddressAllField")) + " Entered.  " + "State phone2IPAddress set to: " + substitutedTitle16)
-		dev.updateStateOnServer(key="phone2IPAddress", value=substitutedTitle16)
-		
-		substitutedTitle17 = self.substitute(pluginAction.props.get("email1AddressAllField", ""))
-		self.debugLog("17: " + str(pluginAction.props.get(u"email1AddressAllField")) + " Entered.  " + "State email1Address set to: " + substitutedTitle17)
-		dev.updateStateOnServer(key="email1Address", value=substitutedTitle17)
-	
-		substitutedTitle18 = self.substitute(pluginAction.props.get("email2AddressAllField", ""))
-		self.debugLog("18: " + str(pluginAction.props.get(u"email2AddressAllField")) + " Entered.  " + "State email2Address set to: " + substitutedTitle18)
-		dev.updateStateOnServer(key="email2Address", value=substitutedTitle18)
-		
-		substitutedTitle19 = self.substitute(pluginAction.props.get("lastHomeAllField", ""))
-		self.debugLog("19: " + str(pluginAction.props.get(u"lastHomeAllField")) + " Entered.  " + "State lastHome set to: " + substitutedTitle19)
-		dev.updateStateOnServer(key="lastHome", value=substitutedTitle19)
-
-		substitutedTitle20 = self.substitute(pluginAction.props.get("lastAwayAllField", ""))
-		self.debugLog("20: " + str(pluginAction.props.get(u"lastAwayAllField")) + " Entered.  " + "State lastAway set to: " + substitutedTitle20)
-		dev.updateStateOnServer(key="lastAway", value=substitutedTitle20)
-
-		substitutedTitle21 = self.substitute(pluginAction.props.get("alertsOnAllField", ""))
-		self.debugLog("21: " + str(pluginAction.props.get(u"alertsOnAllField")) + " Entered.  " + "State alertsOn set to: " + substitutedTitle21)
-		dev.updateStateOnServer(key="alertsOn", value=substitutedTitle21)
-		
 
 	#### Now Showing Room scripts need to include the rest of the My Rooms states
 	#### Need to re-work Specific Record to be able to select the room from a list of room devices.
@@ -288,47 +280,77 @@ class Plugin(indigo.PluginBase):
 
 	
 	### Showing Specific Record for control page use
-	def nowShowingSpecific(self, pluginAction, dev):
-		nowShowingRequest = self.substitute(pluginAction.props.get("nowShowingSpecificField", ""))
-		roomCount = indigo.devices.len(filter="com.whmoorejr.my-rooms")-1
-		nowShowingRequest = int(nowShowingRequest)
-		recordRequested = 0
+	def nowShowingSpecific(self, pluginAction, dev, valuesDict):
+		requestedDev = str(pluginAction.props.get(u"setRequestedDevice"))
+		sourceDev = indigo.devices[int(requestedDev)]
+		sourceDevName = sourceDev.name
+		sourceDevID = sourceDev.id
 		
-		### Verify Request is Within Range
-		if nowShowingRequest > roomCount:
-			self.debugLog("That Didn't Work: Can't get record# " + str(nowShowingRequest) + " out of " + str(roomCount) + " records")
-			self.debugLog("Setting NowShowingRoom Back to First Record, Record #0")
-			recordRequested = 0
-			self.pluginPrefs["recordRequested"] = 0
-		else:
-			recordRequested = nowShowingRequest
-			self.pluginPrefs["recordRequested"] = recordRequested
+
+		meta_roomName = sourceDev.pluginProps.get("meta_roomName","unknown")
+		meta_roomState = sourceDev.pluginProps.get("meta_roomState","Other")
+		meta_floorLevel = sourceDev.pluginProps.get("meta_floorLevel","unknown")
+		meta_building = sourceDev.pluginProps.get("meta_building","unknown")
+		meta_isOccupied = sourceDev.pluginProps.get("meta_isOccupied","unknown")
+		meta_lastOccupied = sourceDev.pluginProps.get("meta_lastVacant","unknown")
+		meta_lastVacant = sourceDev.pluginProps.get("meta_floorLevel","unknown")
+		meta_occupedBy1 = sourceDev.pluginProps.get("meta_occupedBy1","unknown")
+		meta_occupedBy2 = sourceDev.pluginProps.get("meta_occupedBy2","unknown")
+		meta_mainLight = sourceDev.pluginProps.get("meta_mainLight","unknown")
+		meta_accentLight = sourceDev.pluginProps.get("meta_accentLight","unknown")
+		meta_luminescence = sourceDev.pluginProps.get("meta_luminescence","unknown")
+		meta_windowShades = sourceDev.pluginProps.get("meta_windowShades","unknown")
+		meta_temperature = sourceDev.pluginProps.get("meta_temperature","unknown")
+		meta_humidity = sourceDev.pluginProps.get("meta_humidity","unknown")
+		meta_ceilingFan = sourceDev.pluginProps.get("meta_ceilingFan","unknown")
 		
+		
+	
+		thisRoomDev = indigo.devices["Now Showing Room"]
+		newProps = thisRoomDev.pluginProps	
+		newProps["meta_roomName"] = meta_roomName
+		newProps["meta_roomState"] = meta_roomState
+		newProps["meta_floorLevel"] = meta_floorLevel
+		newProps["meta_building"] = meta_building
+		newProps["meta_isOccupied"] = meta_isOccupied
+		newProps["meta_occupedBy1"] = meta_occupedBy1
+		newProps["meta_occupedBy2"] = meta_occupedBy2
+		newProps["meta_mainLight"] = meta_mainLight
+		newProps["meta_accentLight"] = meta_accentLight
+		newProps["meta_luminescence"] = meta_luminescence
+		newProps["meta_windowShades"] = meta_windowShades
+		newProps["meta_temperature"] = meta_temperature
+		newProps["meta_humidity"] = meta_humidity
+		newProps["meta_ceilingFan"] = meta_ceilingFan
+		newProps["address"] = sourceDevName # shows which device the Now Showing Room is displaying in the Address field of the GUI
+		thisRoomDev.replacePluginPropsOnServer(newProps)		
+	
 		recordCount = 0
 		for dev in indigo.devices.iter(filter="com.whmoorejr.my-rooms"):
-			if recordCount == recordRequested:
-				roomName = dev.states["roomName"]
-				roomState = dev.states["roomState"]
-############ Fill in the rest of the states ############  (Copy from line 310 through...)
-				
+			if dev.name == sourceDevName:
 				break
 			recordCount += 1
+		self.pluginPrefs["recordRequested"] = recordCount	
+		thisRecord = str(recordCount)
+		indigo.server.log(u"Record Requested is #: " + thisRecord + ") " + sourceDevName )
+				
+	def filterDevicesNS(self, filter, valuesDict, typeId, targetId):
+		xList =[]
+		for dev in indigo.devices.iter(filter="com.whmoorejr.my-rooms"):
+			if dev.name != "Now Showing Room":  
+				xList.append(( unicode(dev.id),dev.name))
+		return xList		
 		
-		indigo.server.log ("Now Showing Room #: " + str(recordRequested) + ") " + roomName)
-		self.aRoomDev = indigo.devices["Now Showing Room"]
-		self.aRoomDev.updateStateOnServer(key="roomName", value=roomName)
-		self.aRoomDev.updateStateOnServer(key="roomState", value=roomState)				
 ############ Fill in the rest of the states ############  (Copy from line 310 through...)	
 
 
-#### Combo State Experiment
+#### SET ANY STATE TEXT INPUT	
 	
-	
-	def setAnyState(self, pluginAction, dev):
+	def setAnyStateFT(self, pluginAction, dev):
 	
 		requestedDev = str(pluginAction.props.get(u"setADeviceField"))
 		requestedState = str(pluginAction.props.get(u"setAnyStateField"))
-		newValue = str(pluginAction.props.get(u"setStateValueField"))
+		newValue = str(pluginAction.props.get(u"newStateValueField"))
 		subNewValue = self.substitute(pluginAction.props.get("newStateValueField", ""))
 		thisRoomDev = indigo.devices[int(requestedDev)]
 		thisDevName = thisRoomDev.name
@@ -338,14 +360,13 @@ class Plugin(indigo.PluginBase):
 		newProps[metaDataItem] = newValue
 		thisRoomDev.replacePluginPropsOnServer(newProps)
 		self.debugLog(newValue + " Entered, " + thisDevName + " : " + requestedState + "has been changed to: " + subNewValue)
-		self.debugLog(metaDataItem)
+		self.debugLog("Saved as metadate porperty" + metaDataItem + " with value "+ newValue)
 	
-		
 	def filterDevices(self, filter, valuesDict, typeId, targetId):
 		xList =[]
 		for dev in indigo.devices.iter(filter="com.whmoorejr.my-rooms"):
-			xList.append(( unicode(dev.id),dev.name))
-		#xList.append(("0","==== off, do not use ===="))
+			if dev.name != "Now Showing Room":
+				xList.append(( unicode(dev.id),dev.name))
 		return xList
 		
 	def buttonConfirmDevice(self, valuesDict, typeID, devId):
@@ -358,8 +379,11 @@ class Plugin(indigo.PluginBase):
 		if valuesDict["setADeviceField"] in ["0",""]: return [("0","")]
 		dev = indigo.devices[int(valuesDict["setADeviceField"])]
 		for state in dev.states:
-			xList.append((state,state+"   ; currentV: "+unicode(dev.states[state]) ))
-		#xList.append(("0","==== off, do not use ===="))
+			if state !="roomState":
+				if state!="roomState.On": 
+					if state!="roomState.Off":
+						if state!="roomState.Other":
+							xList.append((state,state+"   ; currentV: "+unicode(dev.states[state]) ))
 		return xList	
 		
 	def buttonConfirmNewValue(self, valuesDict, typeId, devId): 
@@ -371,7 +395,172 @@ class Plugin(indigo.PluginBase):
 		thisRoomDev = indigo.devices[int(requestedDev)]
 		thisDevName = thisRoomDev.name
 		thisRoomDev.updateStateOnServer(key=requestedState, value=subNewValue)
-		self.debugLog(newValue + " Entered, " + thisDevName + " : " +  requestedState + " has been changed to: " + subNewValue)
-		self.debugLog("subNewValue: " + subNewValue)
+		self.debugLog(u"The Device -"+thisDevName+":"+requestedState+"- value set to: -" + subNewValue + "- From Entered Text: -" +newValue+"-")
+		
+		newProps = thisRoomDev.pluginProps
+		metaDataItem = "meta_"+requestedState
+		newProps[metaDataItem] = newValue
+		thisRoomDev.replacePluginPropsOnServer(newProps)
+		self.debugLog("metadata added to " + thisDevName + " key= " + metaDataItem + " with value: " + newValue)
+		return valuesDict
+
+
+#### SET ANY STATE FROM SOURCE STATE
+	def setAnyStateFS(self, pluginAction, dev):
+		requestedDev = str(pluginAction.props.get(u"setADeviceFieldFS"))
+		requestedState = str(pluginAction.props.get(u"setAnyStateFieldFS"))  
+		sourceDevID = str(pluginAction.props.get(u"setSourceDeviceField")) 
+		sourceState = str(pluginAction.props.get(u"setSourceStateField")) 
+		newValue = (u"%%d:"+sourceDevID+":"+sourceState+"%%")
+		subNewValue = self.substitute(newValue)
+		sourceDevice = indigo.devices[int(sourceDevID)]
+		sourceDeviceName = sourceDevice.name
+		thisRoomDev = indigo.devices[int(requestedDev)]
+		thisDevName = thisRoomDev.name
+		thisRoomDev.updateStateOnServer(key=requestedState, value=subNewValue)
+		self.debugLog(u"The Device -"+thisDevName+":"+requestedState+"- value set to: -" + subNewValue + "- From Source: -" +sourceDeviceName+ ":"+sourceState+"-")
+		
+		newProps = thisRoomDev.pluginProps
+		metaDataItem = "meta_"+requestedState
+		newProps[metaDataItem] = newValue
+		thisRoomDev.replacePluginPropsOnServer(newProps)
+		self.debugLog("metadata added to " + thisDevName + ". key= " + metaDataItem + " with value: " + newValue)
+		
+	def filterDevicesFS(self, filter, valuesDict, typeId, targetId):
+		xList =[]
+		for dev in indigo.devices.iter(filter="com.whmoorejr.my-rooms"):
+			if dev.name != "Now Showing Room":
+				xList.append(( unicode(dev.id),dev.name))
+		return xList
+		
+	def buttonConfirmDeviceFS(self, valuesDict, typeID, devId):
+		return valuesDict
+
+	def filterDevStatesFS(self, filter, valuesDict, typeId, targetId):
+		xList =[]
+		if len(valuesDict) < 2:                         return [("0","")]
+		if "setADeviceFieldFS" not in valuesDict:       return [("0","")]
+		if valuesDict["setADeviceFieldFS"] in ["0",""]: return [("0","")]
+		dev = indigo.devices[int(valuesDict["setADeviceFieldFS"])]
+		for state in dev.states:
+			if state !="roomState":
+				if state!="roomState.On": 
+					if state!="roomState.Off":
+						if state!="roomState.Other":
+							xList.append((state,state+"   ; currentV: "+unicode(dev.states[state]) ))
+		#xList.append(("0","==== off, do not use ===="))
+		return xList	
+	
+	def filterAllDevices(self, filter, valuesDict, typeId, targetId):
+		xList =[]
+		for dev in indigo.devices:
+			if dev.name !="Now Showing Room":
+				xList.append(( unicode(dev.id),dev.name))
+		return xList
+	
+	def buttonConfirmSourceFS(self, valuesDict, typeID, devID):
+		return valuesDict
+	
+	def filterSourceDevStates(self, filter, valuesDict, typeId, targetId):
+		xList =[]
+		if len(valuesDict) < 2:                         return [("0","")]
+		if "setSourceDeviceField" not in valuesDict:       return [("0","")]
+		if valuesDict["setSourceDeviceField"] in ["0",""]: return [("0","")]
+		dev = indigo.devices[int(valuesDict["setSourceDeviceField"])]
+		for state in dev.states:
+			xList.append((state,state+"   ; currentV: "+unicode(dev.states[state]) ))
+		return xList
+			
+	def buttonConfirmNewValueFS(self, valuesDict, typeId, devId): 
+		self.debugLog("I Pushed the Confirm Button")
+		requestedDev = valuesDict["setADeviceFieldFS"]
+		requestedState = valuesDict["setAnyStateFieldFS"]
+		sourceDevID = valuesDict["setSourceDeviceField"]
+		sourceState = valuesDict["setSourceStateField"]
+		newValue = (u"%%d:"+sourceDevID+":"+sourceState+"%%")
+		subNewValue = self.substitute(newValue)
+		sourceDevice = indigo.devices[int(sourceDevID)]
+		sourceDeviceName = sourceDevice.name
+		thisRoomDev = indigo.devices[int(requestedDev)]
+		thisDevName = thisRoomDev.name
+		thisRoomDev.updateStateOnServer(key=requestedState, value=subNewValue)
+		self.debugLog(u"The Device -"+thisDevName+":"+requestedState+"- value set to: -" + subNewValue + "- From Source: -" +sourceDeviceName+ ":"+sourceState+"-")
+		
+		newProps = thisRoomDev.pluginProps
+		metaDataItem = "meta_"+requestedState
+		newProps[metaDataItem] = newValue
+		thisRoomDev.replacePluginPropsOnServer(newProps)
+		self.debugLog("metadata added to " + thisDevName + ". key= " + metaDataItem + " with value: " + newValue)
 		return valuesDict
 		
+#### SET ANY STATE FROM VARIABLE
+	def setAnyStateFV(self, pluginAction, dev):
+		requestedDev = str(pluginAction.props.get(u"setADeviceFieldFV"))
+		requestedState = str(pluginAction.props.get(u"setAnyStateFieldFV"))  
+		sourceVarID = str(pluginAction.props.get(u"setSourceVariableField")) 
+		newValue = (u"%%v:"+sourceVarID+"%%")
+		subNewValue = self.substitute(newValue)
+		sourceVariable = indigo.variables[int(sourceVarID)]
+		sourceVariableName = sourceVariable.name
+		thisRoomDev = indigo.devices[int(requestedDev)]
+		thisDevName = thisRoomDev.name
+		thisRoomDev.updateStateOnServer(key=requestedState, value=subNewValue)
+		self.debugLog(u"The Device -"+thisDevName+":"+requestedState+"- value set to: -" + subNewValue + "- From Variable: -" +sourceVariableName+ ":"+sourceVarID+"-")
+		
+		newProps = thisRoomDev.pluginProps
+		metaDataItem = "meta_"+requestedState
+		newProps[metaDataItem] = newValue
+		thisRoomDev.replacePluginPropsOnServer(newProps)
+		self.debugLog("metadata added to " + thisDevName + ". key= " + metaDataItem + " with value: " + newValue)
+		
+	def filterDevicesFV(self, filter, valuesDict, typeId, targetId):
+		xList =[]
+		for dev in indigo.devices.iter(filter="com.whmoorejr.my-rooms"):
+			if dev.name != "Now Showing Room":
+				xList.append(( unicode(dev.id),dev.name))
+		return xList
+		
+	def buttonConfirmDeviceFV(self, valuesDict, typeID, devId):
+		return valuesDict
+
+	def filterDevStatesFV(self, filter, valuesDict, typeId, targetId):
+		xList =[]
+		if len(valuesDict) < 2:                         return [("0","")]
+		if "setADeviceFieldFV" not in valuesDict:       return [("0","")]
+		if valuesDict["setADeviceFieldFV"] in ["0",""]: return [("0","")]
+		dev = indigo.devices[int(valuesDict["setADeviceFieldFV"])]
+		for state in dev.states:
+			if state !="roomState":
+				if state!="roomState.On": 
+					if state!="roomState.Off":
+						if state!="roomState.Other":
+							xList.append((state,state+"   ; currentV: "+unicode(dev.states[state]) ))
+		return xList	
+	
+	def filterAllVariables(self, filter, valuesDict, typeId, targetId):
+		vList =[]
+		for var in indigo.variables:
+			vList.append(( unicode(var.id),var.name))
+		return vList 
+			
+	def buttonConfirmNewValueFV(self, valuesDict, typeId, devId): 
+		self.debugLog("I Pushed the Confirm Button")
+		requestedDev = valuesDict["setADeviceFieldFV"]
+		requestedState = valuesDict["setAnyStateFieldFV"]
+		sourceVarID = valuesDict["setSourceVariableField"]
+		newValue = (u"%%v:"+sourceVarID+"%%")
+		subNewValue = self.substitute(newValue)
+		sourceVariable = indigo.variables[int(sourceVarID)]
+		sourceVariableName = sourceVariable.name
+		thisRoomDev = indigo.devices[int(requestedDev)]
+		thisDevName = thisRoomDev.name
+		thisRoomDev.updateStateOnServer(key=requestedState, value=subNewValue)
+		self.debugLog(u"The Device -"+thisDevName+":"+requestedState+"- value set to: -" + subNewValue + "- From Variable: -" +sourceVariableName+ ":"+sourceVarID+"-")
+		
+		newProps = thisRoomDev.pluginProps
+		metaDataItem = "meta_"+requestedState
+		newProps[metaDataItem] = newValue
+		thisRoomDev.replacePluginPropsOnServer(newProps)
+		self.debugLog("metadata added to " + thisDevName + ". key= " + metaDataItem + " with value: " + newValue)
+		return valuesDict
+	

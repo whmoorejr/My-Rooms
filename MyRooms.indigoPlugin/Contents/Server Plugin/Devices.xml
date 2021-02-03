@@ -33,7 +33,7 @@
 				<TriggerLabelPrefix>Room State Changed to</TriggerLabelPrefix>
 				<ControlPageLabel>Room State</ControlPageLabel>
 			</State>
-			<State id="floor"><ValueType>String</ValueType><TriggerLabel>Floor</TriggerLabel><ControlPageLabel>Floor</ControlPageLabel></State>
+			<State id="floorLevel"><ValueType>String</ValueType><TriggerLabel>Floor / Level</TriggerLabel><ControlPageLabel>Floor / Level</ControlPageLabel></State>
 			<State id="building"><ValueType>String</ValueType><TriggerLabel>Building</TriggerLabel><ControlPageLabel>Building</ControlPageLabel></State>
 			
 		<!-- Occupancy States -->	

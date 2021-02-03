@@ -1,20 +1,33 @@
 <?xml version="1.0"?>
 <PluginConfig>
 	<SupportURL>https://forums.indigodomo.com/viewforum.php?f=351</SupportURL>
-  	<Field id="infoLabel0" type="label" fontSize='large' fontColor="black">
+  	<Field id="infoLabel0" type="Label" fontSize='large' fontColor="black">
     	<Label>My Rooms Plugin</Label>
   	</Field>
 
-  	<Field id="space0" type="label" fontColor="black">
+  	<Field id="space" type="Label" fontColor="black">
     	<Label>Developed by: Bill Moore</Label>
   	</Field>
   	
-  	<Field id="sep7" type="separator">
+  	<Field id="sep1" type="separator"/>
+  	<Field id="space1" type="Label"><Label>Update Frequency sets how often Room Device states are updated.</Label></Field>
+  	<Field id="space2" type="Label"><Label>The more frequently you update, the more the server will work.</Label></Field> 
+  	<Field id="space3" type="Label"><Label></Label></Field> 
+   	<Field id="space4" type="Label"><Label>Optionally, there is a Update action that can also be used.</Label></Field>  		
+	<Field id="space5" type="Label"><Label></Label></Field> 
+    <Field id="sep2" type="separator"/>	
+
+    <Field id="pollFreq" type="menu" defaultValue="5">
+    	<Label>Polling Frequency:</Label>
+    	<List class="self" filter="new" method="setPollFrequency" dynamicReload="false"/>
+    </Field>
+    	
+ 	<Field id="space6" type="Label"><Label></Label></Field> 
+    <Field id="sep3" type="separator"/>	   
+ 
+  	<Field id="space7" type="Label" fontColor="blue">
+  		<Label>Nothing more to configure, enjoy the plugin!</Label>
   	</Field>
   	
-  	<Field id="space1" type="label" fontColor="blue">
-  		<Label>Nothing to configure, enjoy the plugin!</Label>
-  	</Field>
-  	
-  	<Field id="recordRequested" type="textfield" hidden="yes"/>
+  	<Field id="recordRequested" type="textField" hidden="yes"/>
 </PluginConfig>
